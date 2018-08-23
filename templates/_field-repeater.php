@@ -38,7 +38,7 @@
 									$renderer = get_item($type, 'renderer');
 									$value = get_item($values["item_{$i}"], $subfield->name);
 									$subfield->slug = "{$config->name}_{$subfield->name}";
-									$subfield->field = "{$config->name}][{$subfield->name}][";
+									$subfield->field = "{$config->name}][{$subfield->name}][{$i}";
 									#
 									if ($type && is_callable($renderer)) {
 										call_user_func($renderer, $subfield, $value);
@@ -78,7 +78,7 @@
 								$renderer = get_item($type, 'renderer');
 								$value = '';
 								$subfield->slug = "{$config->name}_{$subfield->name}";
-								$subfield->field = "{$config->name}][{$subfield->name}][";
+								$subfield->field = "{$config->name}][{$subfield->name}][*|NUM|*";
 								if ($type && is_callable($renderer)) {
 									call_user_func($renderer, $subfield, $value);
 								} else {

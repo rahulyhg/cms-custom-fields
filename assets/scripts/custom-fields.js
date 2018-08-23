@@ -1,6 +1,8 @@
 jQuery(document).ready(function($) {
 
-	$('.js-image-select').on('click', function(e) {
+	var host = $('.has-custom-fields');
+
+	host.on('click', '.js-image-select', function(e) {
 		e.preventDefault();
 		var el = $(this),
 			container = el.closest('.image-widget'),
@@ -20,7 +22,17 @@ jQuery(document).ready(function($) {
 		});
 	});
 
-	$('.js-file-select').on('click', function(e) {
+	host.on('click', '.js-image-delete', function(e) {
+		e.preventDefault();
+		var el = $(this),
+			preview = el.closest('.image-preview'),
+			container = preview.closest('.metabox-body'),
+			selector = container.find('.image-selector');
+		preview.addClass('hide');
+		selector.removeClass('hide').find('input').val(0);
+	});
+
+	host.on('click', '.js-file-select', function(e) {
 		e.preventDefault();
 		var el = $(this),
 			container = el.closest('.file-widget'),
@@ -40,10 +52,11 @@ jQuery(document).ready(function($) {
 		});
 	});
 
-	$('.js-gallery-add').on('click', function(e) {
+	host.on('click', '.js-gallery-add', function(e) {
 		var el = $(this),
 			gallery = el.closest('.gallery-widget'),
 			images = gallery.find('.gallery-images'),
+			field = gallery.data('field'),
 			template = _.template( $( gallery.dataToElement('template') ).html() || '<div>Template not found</div>' ),
 			selected = [];
 		e.preventDefault();
@@ -59,16 +72,14 @@ jQuery(document).ready(function($) {
 				for (var i = 0; i < selection.length; i++) {
 					var item = selection[i];
 					if (! images.find('[data-id='+ item.id +']').length ) {
-						images.append( template({ item: item }) );
+						images.append( template({ item: item, field: field }) );
 					}
 				}
 			}
 		});
 	});
 
-	$('.gallery-images').each(function(index, el) {
-		dragula([el]);
-	}).on('click', '.js-action-delete', function(e) {
+	host.on('click', '.js-gallery-delete', function(e) {
 		var el = $(this),
 			image = el.closest('.image-wrapper');
 		e.preventDefault();
@@ -77,11 +88,38 @@ jQuery(document).ready(function($) {
 		});
 	});
 
+	var bindGalleryDrag = function(container) {
+		container = container || host;
+		container.find('.gallery-images').each(function(index, el) {
+			dragula([el]);
+		})
+	}
+
 	var fixRepeaterNumbers = function(widget) {
 		var items = widget.find('.repeater-items .repeater-item');
 		items.each(function(index) {
 			var item = $(this);
 			item.find('.item-grip .number').text(index + 1);
+			var subfields = item.find('[name]'),
+				galleries = item.find('.gallery-widget');
+			subfields.each(function() {
+				var subfield = $(this)
+					name = subfield.attr('name');
+				name = name.replace(/(fields\[[^\s\]]+\]\[[^\s\]]+\]\[)([0-9]+)(\](?:\[\])?)/, function() {
+					var ret = arguments[1] + index + arguments[3];
+					return ret;
+				});
+				subfield.attr('name', name);
+			});
+			galleries.each(function() {
+				var gallery = $(this),
+					field = gallery.data('field');
+				field = field.replace(/([^\s\]]+\]\[[^\s\]]+\]\[)([0-9]+)/, function() {
+					var ret = arguments[1] + index;
+					return ret;
+				});
+				gallery.attr('data-field', field);
+			});
 		});
 		if (items.length) {
 			widget.removeClass('empty');
@@ -112,6 +150,7 @@ jQuery(document).ready(function($) {
 			container = widget.find('.repeater-items'),
 			newItem = template();
 		e.preventDefault();
+		newItem = $( newItem.replace(/\*\|NUM\|\*/g, container.children('.repeater-item').length) );
 		switch (position) {
 			case 'before':
 				item.before(newItem);
@@ -121,6 +160,7 @@ jQuery(document).ready(function($) {
 			break;
 		}
 		fixRepeaterNumbers(widget);
+		bindGalleryDrag(newItem);
 	}).on('click', '.js-repeater-delete', function(e) {
 		var el = $(this),
 			item = el.closest('.repeater-item'),
@@ -153,5 +193,7 @@ jQuery(document).ready(function($) {
 		});
 		ul.find('li a').first().trigger('click');
 	});
+
+	bindGalleryDrag();
 
 });

@@ -93,6 +93,8 @@
 			$site->registerHook('cms.adminHeaderHtml', 'CustomFieldsPlugin::handleAdminHeaderHtml');
 			$site->registerHook('cms.adminFooterHtml', 'CustomFieldsPlugin::handleAdminFooterHtml');
 			$site->registerHook('cms.adminAfterUpsert', 'CustomFieldsPlugin::handleAdminAfterUpsert');
+			//
+			$site->addBodyClass('has-custom-fields');
 		}
 
 		public static function handleAdminHeaderHtml() {
@@ -107,6 +109,8 @@
 			global $site;
 			$plugin = $site->cms->getPlugin('custom-fields');
 			if ( is_object($plugin) ) {
+				$partial_dir = "{$plugin->dir}/templates";
+				$site->partial('gallery-item', [], $partial_dir);
 				echo '<script type="text/javascript" src="'.$plugin->uri.'/assets/scripts/custom-fields.js"></script>';
 			}
 		}
@@ -118,7 +122,7 @@
 			$_fields = $request->post('_fields');
 			if ($entity && $entity->id) {
 				foreach ($fields as $key => $value) {
-					$entity->updateMeta($key, $value);
+					$entity->updateMeta($key, is_array($value) && count($value) == 0 ? '' : $value);
 				}
 			}
 			# Save fields shadow data (for decoding)
@@ -615,7 +619,7 @@
 										// $applies = ($rule->operator == '==' ? $site->cms->user->type == $rule->value : $site->cms->user->type != $rule->value);
 									break;
 									case 'entity':
-										$applies = $admin_module == 'entity' && ($rule->operator == '==' ? $admin_index == $rule->value : $admin_index != $rule->value);
+										$applies = $type == 'entity' && ($rule->operator == '==' ? $admin_index == $rule->value : $admin_index != $rule->value);
 									break;
 								}
 							}
