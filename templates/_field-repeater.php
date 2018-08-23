@@ -4,6 +4,7 @@
 	<div class="repeater-widget widget-custom-fields <?php echo ($value ? '' : 'empty'); ?>" data-template="<?php $site->cms->sanitizeText("#template_{$config->slug}", true); ?>">
 
 		<div class="repeater-items">
+			<input type="hidden" name="fields[<?php $site->cms->sanitizeText($config->field, true); ?>]">
 
 			<?php
 				$subfields = [];

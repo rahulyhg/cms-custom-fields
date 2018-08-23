@@ -615,7 +615,7 @@
 										// $applies = ($rule->operator == '==' ? $site->cms->user->type == $rule->value : $site->cms->user->type != $rule->value);
 									break;
 									case 'entity':
-										$applies = $type == 'entity' && ($rule->operator == '==' ? $admin_index == $rule->value : $admin_index != $rule->value);
+										$applies = $admin_module == 'entity' && ($rule->operator == '==' ? $admin_index == $rule->value : $admin_index != $rule->value);
 									break;
 								}
 							}
