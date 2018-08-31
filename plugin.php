@@ -613,13 +613,13 @@
 							foreach ($config->location as $rule) {
 								switch ($rule->param) {
 									case 'entity_type':
-										$applies = $admin_module == 'entity' && ($rule->operator == '==' ? $entity_type == $rule->value : $entity_type != $rule->value);
+										$applies = $admin_module == 'entity' && ($rule->operator == '==' ? $entity_type === $rule->value : $entity_type !== $rule->value);
 									break;
 									case 'user_type':
 										// $applies = ($rule->operator == '==' ? $site->cms->user->type == $rule->value : $site->cms->user->type != $rule->value);
 									break;
 									case 'entity':
-										$applies = $admin_module == 'entity' && ($rule->operator == '==' ? $admin_index == $rule->value : $admin_index != $rule->value);
+										$applies = $admin_module == 'entity' && ($rule->operator == '==' ? $admin_index === $rule->value : $admin_index !== $rule->value);
 									break;
 								}
 							}
