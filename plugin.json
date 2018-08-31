@@ -1,7 +1,7 @@
 {
 	"name":"Custom fields",
 	"description":"Custom fields to add extra data to your entities",
-	"version":"0.8",
+	"version":"0.81",
 	"author":"biohzrdmx",
 	"url":"http://github.com/biohzrdmx",
 	"keywords":"custom-fields"
