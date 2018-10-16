@@ -622,12 +622,11 @@
 										$applies = $admin_module == 'entity' && ($rule->operator == '==' ? $admin_index === $rule->value : $admin_index !== $rule->value);
 									break;
 									case 'taxonomy':
-										$applies = $admin_module == 'taxonomy' && ($rule->operator == '==' ? $admin_index === $rule->value : $admin_index !== $rule->value);
+										$applies = $admin_module == 'taxonomy' && ($rule->operator == '==' ? $taxonomy_type === $rule->value : $taxonomy_type !== $rule->value);
 									break;
 									case 'term':
-										$applies = $admin_module == 'term' && ($rule->operator == '==' ? $admin_index === $rule->value : $admin_index !== $rule->value);
+										$applies = $admin_module == 'taxonomy' && ($rule->operator == '==' ? $admin_index === $rule->value : $admin_index !== $rule->value);
 									break;
-									print_a($admin_module);
 								}
 								if ($applies) break
 							}
