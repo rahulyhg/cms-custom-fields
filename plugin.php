@@ -553,6 +553,22 @@
 				$entity = Entities::getById($id);
 				$value = $entity ? $entity->getMeta($name) : '';
 				$_fields = $entity->getMeta('_fields');
+			} else {
+				$parts = explode('_', $id, 2);
+				$type = get_item($parts, 0);
+				$id = get_item($parts, 1, 0);
+				switch ( $type ) {
+					case 'term':
+						$term = Terms::getById($id);
+						$value = $term ? $term->getMeta($name) : '';
+						$_fields = $term->getMeta('_fields');
+					break;
+					case 'user':
+						$user = Users::getById($id);
+						$value = $user ? $user->getMeta($name) : '';
+						$_fields = $user->getMeta('_fields');
+					break;
+				}
 			}
 			if ($value) {
 				$ret = $value;
