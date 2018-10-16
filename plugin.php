@@ -621,7 +621,15 @@
 									case 'entity':
 										$applies = $admin_module == 'entity' && ($rule->operator == '==' ? $admin_index === $rule->value : $admin_index !== $rule->value);
 									break;
+									case 'taxonomy':
+										$applies = $admin_module == 'taxonomy' && ($rule->operator == '==' ? $admin_index === $rule->value : $admin_index !== $rule->value);
+									break;
+									case 'term':
+										$applies = $admin_module == 'term' && ($rule->operator == '==' ? $admin_index === $rule->value : $admin_index !== $rule->value);
+									break;
+									print_a($admin_module);
 								}
+								if ($applies) break
 							}
 						}
 						if ($applies && $config->settings->position == $position) {
