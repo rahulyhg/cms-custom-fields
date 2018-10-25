@@ -242,20 +242,25 @@ jQuery(document).ready(function($) {
 			position = el.data('position'),
 			item = el.closest('.repeater-item'),
 			container = widget.find('.repeater-items'),
-			newItem = template();
+			newItem = template(),
+			max = parseInt( container.data('max') ) || 0;
 		e.preventDefault();
-		newItem = $( newItem.replace(/\*\|NUM\|\*/g, container.children('.repeater-item').length) );
-		switch (position) {
-			case 'before':
-				item.before(newItem);
-			break;
-			case 'append':
-				container.append(newItem);
-			break;
+		if (max == 0 || container.find('.repeater-item').length < max ) {
+			newItem = $( newItem.replace(/\*\|NUM\|\*/g, container.children('.repeater-item').length) );
+			switch (position) {
+				case 'before':
+					item.before(newItem);
+				break;
+				case 'append':
+					container.append(newItem);
+				break;
+			}
+			fixRepeaterNumbers(widget);
+			bindGalleryDrag(newItem);
+			bindContentAreas(newItem);
+		} else {
+			el.velocity('callout.shake');
 		}
-		fixRepeaterNumbers(widget);
-		bindGalleryDrag(newItem);
-		bindContentAreas(newItem);
 	}).on('click', '.js-repeater-delete', function(e) {
 		var el = $(this),
 			item = el.closest('.repeater-item'),

@@ -3,7 +3,7 @@
 
 	<div class="repeater-widget widget-custom-fields <?php echo ($value ? '' : 'empty'); ?>" data-template="<?php $site->cms->sanitizeText("#template_{$config->slug}", true); ?>">
 
-		<div class="repeater-items">
+		<div class="repeater-items" data-min="<?php echo get_item($config, 'min', 0); ?>" data-max="<?php echo get_item($config, 'max', 0); ?>">
 			<input type="hidden" name="fields[<?php $site->cms->sanitizeText($config->field, true); ?>]">
 
 			<?php
@@ -62,7 +62,7 @@
 		</div>
 
 		<div class="repeater-actions">
-			<a href="#" class="button button-primary js-repeater-add" data-position="append">Add row</a>
+			<a href="#" class="button button-primary js-repeater-add" data-position="append"><?php $site->cms->sanitizeText(get_item($config, 'button', 'Add row'), true); ?></a>
 		</div>
 
 		<script type="text/template" id="<?php $site->cms->sanitizeText("template_{$config->slug}", true); ?>">
