@@ -92,8 +92,102 @@ jQuery(document).ready(function($) {
 		container = container || host;
 		container.find('.gallery-images').each(function(index, el) {
 			dragula([el]);
-		})
-	}
+		});
+	};
+
+	var bindContentAreas = function(container) {
+		container = container || host;
+		var body = $('body');
+		container.find('.codemirror').each(function(index, el) {
+			var el = $(this),
+				mode = el.data('mode'),
+				readOnly = el.data('readonly') || false,
+				lineWrapping = el.data('lineWrapping') || false,
+				textarea = el.find('textarea'),
+				countTimer = null,
+				countLabel = el.find('.js-num-words'),
+				updateWordCount = function() {
+					var regexp = /[\w\u00E0-\u00FC]+(-[\w\u00E0-\u00FC]+)*/g,
+						matches = editor.getValue().match(regexp) || [];
+					countLabel.text(matches.length);
+				};
+			var tabWidth = 'application/json' ? 2 : 4;
+			var config = {
+				keyMap: 'sublime',
+				autoRefresh: true,
+				lineWrapping: true,
+				styleActiveLine: true,
+				tabSize: tabWidth,
+				indentUnit: tabWidth,
+				indentWithTabs: true,
+				readOnly: readOnly,
+				lineNumbers: true,
+				theme: body.hasClass('theme-dark') ? 'monokai' : 'github-light',
+				mode: mode
+			};
+			// console.log(config);
+			var editor = CodeMirror.fromTextArea(textarea[0], config);
+			//
+			editor.name = textarea.attr('name');
+			editor.parent = el;
+			//
+			emmetCodeMirror(editor);
+			//
+			el.data('editor', editor);
+			//
+			el.find('.toggle').toggleSwitch({
+				labels: ['Code', 'Preview'],
+				onChange: function(state) {
+					var preview = el.find('.content-preview');
+					if (state) {
+						var mime = $('[name=mime_type]').val(),
+							code = editor.getValue();
+						if (mime == 'text/markdown') {
+							code = marked(code);
+						}
+						preview.html(code);
+						preview.removeClass('hide');
+					} else {
+						preview.addClass('hide');
+					}
+				}
+			});
+			//
+			$('[name=mime_type]').on('change', function() {
+				var el = $(this),
+					val = el.val();
+				editor.setOption('mode', val);
+			});
+			//
+			updateWordCount();
+			//
+			editor.on('change', function() {
+				if (countLabel.length) {
+					if (countTimer) {
+						clearTimeout(countTimer);
+						countTimer = null;
+					}
+					setTimeout(updateWordCount, 500);
+				}
+			});
+		});
+		container.find('.js-toggle-fixed').on('click', function(e) {
+			var el = $(this),
+				html = $('html'),
+				target = el.dataToElement('target'),
+				editor = target.data('editor') || null,
+				fixed = false;
+			e.preventDefault();
+			target.toggleClass('fixed');
+			fixed = target.hasClass('fixed');
+			html.css('overflowY', fixed ? 'hidden' : 'scroll');
+			el.find('span').text(fixed ? 'Restore' : 'Fullscreen');
+			el.find('i.fa').attr('class', fixed ? 'fa fa-fw fa-window-restore' : 'fa fa-fw fa-window-maximize');
+			if (editor) {
+				editor.refresh();
+			}
+		});
+	};
 
 	var fixRepeaterNumbers = function(widget) {
 		var items = widget.find('.repeater-items .repeater-item');
@@ -161,6 +255,7 @@ jQuery(document).ready(function($) {
 		}
 		fixRepeaterNumbers(widget);
 		bindGalleryDrag(newItem);
+		bindContentAreas(newItem);
 	}).on('click', '.js-repeater-delete', function(e) {
 		var el = $(this),
 			item = el.closest('.repeater-item'),
