@@ -644,7 +644,7 @@
 										$applies = $admin_module == 'taxonomy' && ($rule->operator == '==' ? $admin_index === $rule->value : $admin_index !== $rule->value);
 									break;
 								}
-								if ($applies) break
+								if ($applies) break;
 							}
 						}
 						if ($applies && $config->settings->position == $position) {
